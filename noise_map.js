@@ -1,23 +1,22 @@
 import PerlinNoise from "./perlin.js"
 
 export default class NoiseMap {
-  constructor(screen_width, screen_height, res, seed) {
-    this.screen_width = screen_width;
-    this.screen_height = screen_height;
-    this.res = res;
+  constructor(screen_res, g_res, seed) {
+    this.screen_res = screen_res;
+    this.g_res = g_res;
     this.seed = seed;
     this.perlin = new PerlinNoise(this.seed);
     this.map = [];
   }
   
-  generate(g_offset_x, g_offset_y) {
+  generate() {
     
     var tmp = [];
     this.map = [];
     
-    for(var y = 0; y < this.screen_height; y++) {
-      for(var x = 0; x < this.screen_width; x++) { 
-        var noise_val = this.perlin.get((x * this.res/this.screen_width) + g_offset_x, (y * this.res/this.screen_height) + g_offset_y);
+    for(var y = 0; y < this.screen_res; y++) {
+      for(var x = 0; x < this.screen_res; x++) { 
+        var noise_val = this.perlin.get((x * this.g_res/this.screen_res), (y * this.g_res/this.screen_res));
         tmp.push(noise_val);
       }
       this.map.push(tmp);
@@ -29,9 +28,11 @@ export default class NoiseMap {
   
   //expects noise_map to have the same dimensions as this.screen_width and this.screen_height
   add_octave(noise_map, bias) {  
-    for(var y = 0; y < this.screen_height; y++) {
-      for(var x = 0; x < this.screen_width; x++) { 
-        this.map[x][y] = this.map[x][y] * (1-bias) + noise_map.map[x][y] * (bias);
+    for(var y = 0; y < this.screen_res; y++) {
+      for(var x = 0; x < this.screen_res; x++) {
+      	var new_x = this.screen_res / noise_map.screen_res * x;
+      	var new_y = this.screen_res / noise_map.screen_res * y;
+        this.map[y][x] = this.map[y][x] * (1-bias) + noise_map.map[new_y][new_x] * (bias);
       }
     }
     

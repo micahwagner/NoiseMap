@@ -73,7 +73,7 @@ export default class PerlinNoise {
       
       var Sy = this.#ease_curve(y - top_L_y);
       var final_val = b + Sy * (a - b);
-    
+
       return final_val;
   }
 
